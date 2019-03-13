@@ -263,7 +263,7 @@ def get_company_name_url(aurl, prefix):
 	for company in companies[:]:
 		if company.get_text() != '':
 			dfObj = dfObj.append({'Company': company.get_text(), 'Url':company['href']}, ignore_index=True)
-	print(dfObj)
+	# print(dfObj)
 	dfObj.to_csv('../output/Urls/'+prefix+'.csv', sep=',')
 
 
