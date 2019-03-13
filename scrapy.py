@@ -4,6 +4,8 @@ import copy
 import re
 import os
 import json
+import numpy as np
+import pandas as pd
 
 # Libraries required to limit the time taken by a request
 import signal
@@ -13,6 +15,7 @@ baseurl		= "http://www.moneycontrol.com"
 base_dir	= "../output"
 company_dir	= base_dir+'/Companies'
 category_Company_dir = base_dir+'/Category-Companies'
+Urls_dir = base_dir+'/Urls'
 company_sector = {}
 
 class TimeoutException(Exception): pass
@@ -244,7 +247,10 @@ def get_sector_data(aurl):
 	company_list	= get_list(category_url,category)
 
 
-def get_company_name_url(aurl):
+
+
+
+def get_company_name_url(aurl, prefix):
 	soup = get_soup(aurl)
 
 	print(aurl)
@@ -252,9 +258,13 @@ def get_company_name_url(aurl):
 	list = soup.find('table',{'class':'pcq_tbl MT10'})
 
 	companies = list.find_all('a')
+
+	dfObj = pd.DataFrame(columns=['Company', 'Url'])
 	for company in companies[:]:
 		if company.get_text() != '':
-			print(company.get_text()+" : "+company['href'])
+			dfObj = dfObj.append({'Company': company.get_text(), 'Url':company['href']}, ignore_index=True)
+	print(dfObj)
+	dfObj.to_csv('../output/Urls/'+prefix+'.csv', sep=',')
 
 
 def get_alpha_quotes(aurl):
@@ -264,7 +274,7 @@ def get_alpha_quotes(aurl):
 
 	list = soup.find('table',{'class':'pcq_tbl MT10'})
 
-	companies = list.find_all('a')	
+	companies = list.find_all('a')
 	for company in companies[:]:
 		if company.get_text() != '':
 			print(company.get_text()+" : "+company['href'])
@@ -278,7 +288,7 @@ def get_all_quotes_data(aurl):
 	links= list.find_all('a')
 	for link in links:
 		print("Accessing list for : "+link.get_text())
-		get_company_name_url(baseurl+link['href'])
+		get_company_name_url(baseurl+link['href'], link.get_text())
 	for link in links[1:]:
 		# print(link.get_text()+" : "+baseurl+link['href'])
 		print("Accessing list for : "+link.get_text())
@@ -294,6 +304,7 @@ if __name__ == '__main__':
 	ckdir(base_dir)
 	ckdir(company_dir)
 	ckdir(category_Company_dir)
+	ckdir(Urls_dir)
 	try:
 		with open(base_dir+"/company-sector.json",'r') as infile:
 			company_sector = json.load(infile)
