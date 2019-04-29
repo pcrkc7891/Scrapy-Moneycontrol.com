@@ -148,6 +148,18 @@ def get_BS_Data(aurl,aname):
 	rows = get_Data(aurl,aname+"-BS-")
 	return
 
+def get_QR_Data(aurl,aname):
+	rows = get_Data(aurl,aname+"-QR-")
+	return
+
+def get_CF_Data(aurl,aname):
+	rows = get_Data(aurl,aname+"-CF-")
+	return
+
+def get_RT_Data(aurl,aname):
+	rows = get_Data(aurl,aname+"-RT-")
+	return
+
 
 def get_sector(asoup):
 
@@ -197,6 +209,22 @@ def get_Company_Data(aurl,aname):
 			if field.get_text() == "Balance Sheet":
 				required_link = baseurl + field['href']
 				get_BS_Data(required_link,aname)
+
+			if field.get_text() == "Quarterly Results":
+				required_link = baseurl + field['href']
+				get_QR_Data(required_link,aname)
+
+			if field.get_text() == "Cash Flow":
+				required_link = baseurl + field['href']
+				get_CF_Data(required_link,aname)
+
+			if field.get_text() == "Ratios":
+				required_link = baseurl + field['href']
+				get_RT_Data(required_link,aname)
+
+			# if field.get_text() == "Capital Structure":
+			# 	required_link = baseurl + field['href']
+			# 	get_RT_Data(required_link,aname)
 
 	company_sector["companies"][aname] = get_sector(soup)
 
@@ -253,7 +281,7 @@ def get_sector_data(aurl):
 def get_company_name_url(aurl, prefix):
 	soup = get_soup(aurl)
 
-	print(aurl)
+	# print(aurl)
 
 	list = soup.find('table',{'class':'pcq_tbl MT10'})
 
